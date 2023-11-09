@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQLite 資料表應用程式</title>
+</head>
+<body>
+    <h1>SQLite 資料表應用程式</h1>
+    <form id="select-table-form">
+        <select id="table-name">
+            {% for table in tables %}
+                <option value="{{ table }}">{{ table }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">選擇資料表</button>
+    </form>
+    <h2>資料表內容</h2>
+    <table id="table-data" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#select-table-form').submit(function(event) {
+            event.preventDefault();
+            var selectedTable = $('#table-name').val();
+            getTableData(selectedTable);
+        });
+    });
+
+    function getTableData(tableName) {
+        $.post('/get_table_data', { table_name: tableName }, function(records) {
+            var tableData = $('#table-data tbody');
+            tableData.empty();
+            records.forEach(function(record) {
+                tableData.append(
+                    '<tr>' +
+                    '<td>' + record.id + '</td>' +
+                    '<td>' + record.data + '</td>' +
+                    '</tr>'
+                );
+            });
+        });
+    }
+</script>
+</html>
